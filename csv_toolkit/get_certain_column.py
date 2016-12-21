@@ -30,6 +30,6 @@ def get_column_value2(file, column_name):
         role_set = set(role_list)
         return sorted(list(role_set))
 
-s1_id=[]
-s1_id=get_column_value2('id_map_all.csv','id')
-# PlayerTransfer.List2csv.list2csv(s1_id,'the_s1_id.csv')
+# test sample
+# s1_id=[]
+# s1_id=get_column_value2('id_map_all.csv','id')
