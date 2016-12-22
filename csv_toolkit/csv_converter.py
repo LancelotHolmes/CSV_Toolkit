@@ -40,20 +40,43 @@ def dict2csv2(dict, file):
         w.writerow(dict.keys())
         w.writerow(dict.values())
 
-# build specific nested dict from csv files(date->name)
-def build_level2_dict(source_file):
+# build specific nested dict from csv files
+# @params:
+#   source_file
+#   outer_key:the outer level key of nested dict
+#   inner_key:the inner level key of nested dict,and rest key-value will be store as the value of inner key
+def build_level2_dict(source_file,outer_key,inner_key):
+    new_dict = {}
+    with open(source_file, 'rb')as csv_file:
+        reader = csv.reader(csv_file, delimiter=',')
+        fieldnames = next(reader)
+        inner_keyset=fieldnames
+        inner_keyset.remove(outer_key)
+        inner_keyset.remove(inner_key)
+        csv_file.seek(0)
+        data = csv.DictReader(csv_file, delimiter=",")
+        for row in data:
+            item = new_dict.get(row[outer_key], dict())
+            item[row[inner_key]] = {k: row[k] for k in inner_keyset}
+            new_dict[row[outer_key]] = item
+    return new_dict
+
+# build specific nested dict from csv files
+# @params:
+#   source_file
+#   outer_key:the outer level key of nested dict
+#   inner_key:the inner level key of nested dict
+#   inner_value:set the inner value for the inner key
+def build_level2_dict2(source_file,outer_key,inner_key,inner_value):
     new_dict = {}
     with open(source_file, 'rb')as csv_file:
         data = csv.DictReader(csv_file, delimiter=",")
         for row in data:
-            item = new_dict.get(row['nationality'], dict())
-            item[row['name']] = {k: row[k] for k in ('id', 'complete name', 'place of birth',
-                                                     'age', 'position', 'height', 'date of birth', 'foot',
-                                                     "player's agent", 'agent id', 'current club',
-                                                     'club id', 'in the team since', 'contract until',
-                                                     'outfitter')}
-            new_dict[row['nationality']] = item
+            item = new_dict.get(row[outer_key], dict())
+            item[row[inner_key]] = row[inner_value]
+            new_dict[row[outer_key]] = item
     return new_dict
+
 #----------------------------------------------------------------------------------------------------------
 
 #---------------------------------------------------csv <--> list--------------------------------------------
