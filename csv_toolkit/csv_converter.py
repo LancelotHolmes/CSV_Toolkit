@@ -77,6 +77,44 @@ def build_level2_dict2(source_file,outer_key,inner_key,inner_value):
             new_dict[row[outer_key]] = item
     return new_dict
 
+# build specific nested dict from csv files
+# a dict like {outer_key:{inner_key1:{inner_key2:{rest_key:rest_value...}}}}
+# the params are extract from the csv column name as you like
+def build_level3_dict(source_file,outer_key,inner_key1,inner_key2):
+    new_dict = {}
+    with open(source_file, 'rb')as csv_file:
+        reader = csv.reader(csv_file, delimiter=',')
+        fieldnames = next(reader)
+        inner_keyset=fieldnames
+        inner_keyset.remove(outer_key)
+        inner_keyset.remove(inner_key1)
+        inner_keyset.remove(inner_key2)
+        csv_file.seek(0)
+        data = csv.DictReader(csv_file, delimiter=",")
+        for row in data:
+            item = new_dict.get(row[outer_key], dict())
+            sub_item = item.get(row[inner_key1], dict())
+            sub_item[row[inner_key2]] = {k: row[k] for k in inner_keyset}
+            item[row[inner_key1]] = sub_item
+            new_dict[row[outer_key]] = item
+    return new_dict
+
+# build specific nested dict from csv files
+# a dict like {outer_key:{inner_key1:{inner_key2:inner_value}}}
+# the params are extract from the csv column name as you like
+def build_level3_dict2(source_file,outer_key,inner_key1,inner_key2,inner_value):
+    new_dict = {}
+    with open(source_file, 'rb')as csv_file:
+        data = csv.DictReader(csv_file, delimiter=",")
+        for row in data:
+            item = new_dict.get(row[outer_key], dict())
+            sub_item = item.get(row[inner_key1], dict())
+            sub_item[row[inner_key2]] = row[inner_value]
+            item[row[inner_key1]] = sub_item
+            new_dict[row[outer_key]] = item
+    return new_dict
+
+
 #----------------------------------------------------------------------------------------------------------
 
 #---------------------------------------------------csv <--> list--------------------------------------------
