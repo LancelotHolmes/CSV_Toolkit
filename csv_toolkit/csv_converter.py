@@ -115,6 +115,22 @@ def build_level3_dict2(source_file,outer_key,inner_key1,inner_key2,inner_value):
     return new_dict
 
 
+# build specific nested dict from csv files
+# a dict like {outer_key:{inner_key1:{inner_key2:[inner_value]}}}
+# for multiple inner_value with the same inner_key2,thus gather them in a list
+# the params are extract from the csv column name as you like
+def build_level3_dict3(source_file,outer_key,inner_key1,inner_key2,inner_value):
+    new_dict = {}
+    with open(source_file, 'rb')as csv_file:
+        data = csv.DictReader(csv_file, delimiter=",")
+        for row in data:
+            item = new_dict.get(row[outer_key], dict())
+            sub_item = item.get(row[inner_key1], dict())
+            sub_item.setdefault(row[inner_key2], []).append(row[inner_value])
+            item[row[inner_key1]] = sub_item
+            new_dict[row[outer_key]] = item
+    return new_dict
+
 #----------------------------------------------------------------------------------------------------------
 
 #---------------------------------------------------csv <--> list--------------------------------------------
