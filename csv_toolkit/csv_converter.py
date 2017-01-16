@@ -40,6 +40,21 @@ def dict2csv2(dict, file):
         w.writerow(dict.keys())
         w.writerow(dict.values())
 
+# build a dict of list like {key:[...element of lst_inner_value...]}
+# key is certain column name of csv file
+# the lst_inner_value is a list of specific column name of csv file
+def build_list_dict(source_file, key, lst_inner_value):
+    new_dict = {}
+    with open(source_file, 'rb')as csv_file:
+        data = csv.DictReader(csv_file, delimiter=",")
+        for row in data:
+            for element in lst_inner_value:
+                new_dict.setdefault(row[key], []).append(row[element])
+    return new_dict
+# sample:
+# test_club=build_list_dict('test_info.csv','season',['move from','move to'])
+# print test_club
+
 # build specific nested dict from csv files
 # @params:
 #   source_file
@@ -78,6 +93,43 @@ def build_level2_dict2(source_file,outer_key,inner_key,inner_value):
     return new_dict
 
 # build specific nested dict from csv files
+# @params:
+#   source_file
+#   outer_key:the outer level key of nested dict
+#   lst_inner_value: a list of column name,for circumstance that the inner value of the same outer_key are not distinct
+#   {outer_key:[{pairs of lst_inner_value}]}
+def build_level2_dict3(source_file,outer_key,lst_inner_value):
+    new_dict = {}
+    with open(source_file, 'rb')as csv_file:
+        data = csv.DictReader(csv_file, delimiter=",")
+        for row in data:
+            new_dict.setdefault(row[outer_key], []).append({k: row[k] for k in lst_inner_value})
+    return new_dict
+
+# build specific nested dict from csv files
+# @params:
+#   source_file
+#   outer_key:the outer level key of nested dict
+#   lst_inner_value: a list of column name,for circumstance that the inner value of the same outer_key are not distinct
+#   {outer_key:{key of lst_inner_value:[...value of lst_inner_value...]}}
+def build_level2_dict4(source_file,outer_key,lst_inner_value):
+    new_dict = {}
+    with open(source_file, 'rb')as csv_file:
+        data = csv.DictReader(csv_file, delimiter=",")
+        for row in data:
+            # print row
+            item = new_dict.get(row[outer_key], dict())
+            # item.setdefault('move from',[]).append(row['move from'])
+            # item.setdefault('move to', []).append(row['move to'])
+            for element in lst_inner_value:
+                item.setdefault(element, []).append(row[element])
+            new_dict[row[outer_key]] = item
+    return new_dict
+
+
+
+
+# build specific nested dict from csv files
 # a dict like {outer_key:{inner_key1:{inner_key2:{rest_key:rest_value...}}}}
 # the params are extract from the csv column name as you like
 def build_level3_dict(source_file,outer_key,inner_key1,inner_key2):
@@ -114,7 +166,6 @@ def build_level3_dict2(source_file,outer_key,inner_key1,inner_key2,inner_value):
             new_dict[row[outer_key]] = item
     return new_dict
 
-
 # build specific nested dict from csv files
 # a dict like {outer_key:{inner_key1:{inner_key2:[inner_value]}}}
 # for multiple inner_value with the same inner_key2,thus gather them in a list
@@ -130,6 +181,7 @@ def build_level3_dict3(source_file,outer_key,inner_key1,inner_key2,inner_value):
             item[row[inner_key1]] = sub_item
             new_dict[row[outer_key]] = item
     return new_dict
+
 
 #----------------------------------------------------------------------------------------------------------
 
