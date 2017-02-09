@@ -126,8 +126,25 @@ def build_level2_dict4(source_file,outer_key,lst_inner_value):
             new_dict[row[outer_key]] = item
     return new_dict
 
+# build specific nested dict from csv files
+# @params:
+#   source_file
+#   outer_key:the outer level key of nested dict
+#   lst_inner_key:a list of column name
+#   lst_inner_value: a list of column name,for circumstance that the inner value of the same lst_inner_key are not distinct
+#   {outer_key:{lst_inner_key:[...lst_inner_value...]}}
+def build_list_dict2(source_file,outer_key,lst_inner_key,lst_inner_value):
+    new_dict = {}
+    with open(source_file, 'rb')as csv_file:
+        data = csv.DictReader(csv_file, delimiter=",")
+        for row in data:
+            # print row
+            item = new_dict.get(row[outer_key], dict())
+            item.setdefault(row[lst_inner_key], []).append(row[lst_inner_value])
+            new_dict[row[outer_key]] = item
+    return new_dict
 
-
+# dct=build_list_dict2('test_info.csv','season','move from','move to')
 
 # build specific nested dict from csv files
 # a dict like {outer_key:{inner_key1:{inner_key2:{rest_key:rest_value...}}}}
