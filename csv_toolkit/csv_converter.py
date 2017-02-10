@@ -2,19 +2,22 @@ import csv
 
 #---------------------------------------------------csv <--> dict--------------------------------------------
 
-# convert csv file to dict(for id_map.csv)
-def csv2dict(in_file):
+# convert csv file to dict
+# @params:
+# key/value: the column of original csv file to set as the key and value of dict
+def csv2dict(in_file,key,value):
     new_dict = {}
     with open(in_file, 'rb') as f:
         reader = csv.reader(f, delimiter=',')
         fieldnames = next(reader)
         reader = csv.DictReader(f, fieldnames=fieldnames, delimiter=',')
         for row in reader:
-            new_dict[row['id']] = row['players.player_id']
+            new_dict[row[key]] = row[value]
     return new_dict
 
 
 # convert csv file to dict(key-value pairs each row)
+# default: set row[0] as key and row[1] as value of the dict
 def row_csv2dict(csv_file):
     dict_club={}
     with open(csv_file)as f:
