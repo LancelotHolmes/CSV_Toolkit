@@ -57,7 +57,22 @@ def csv_not_match(refer_list, key, input_file, output_file):
             f.write(",".join(data[h] for h in header))
             f.write('\n')
 
+# output the rows that not matched with key in refer_list to a new csv file
+# @params
+# refer_list: the list referred to
+# key,key2: column name of csv file to check the value in the refer_list or not
+def csv_not_match2(refer_list, key1,key2, input_file, output_file):
+    with open(input_file, 'rb') as f:
+        reader = csv.DictReader(f)
+        rows = [row for row in reader if (row[key1] not in set(refer_list)) and (row[key2] not in set(refer_list))]
 
+    header = rows[0].keys()
+    with open(output_file, 'w') as f:
+        f.write(','.join(header))
+        f.write('\n')
+        for data in rows:
+            f.write(",".join(data[h] for h in header))
+            f.write('\n')
 
 
 
